@@ -6,5 +6,6 @@ Tecnologias utilizadas:
  - Spring Data JPA 
  - Actuator
  - Lombok
+ - PostgreSQL
  
  
