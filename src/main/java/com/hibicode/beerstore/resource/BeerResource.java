@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -17,8 +16,8 @@ public class BeerResource {
     private Beers beers;
 
     @GetMapping
-    public List<String> all() {
-        return Arrays.asList("Heineken", "Colorado Indiga", "Stella Artois", "Bohemia");
+    public List<Beer> all() {
+        return beers.findAll();
     }
 
     @PostMapping
