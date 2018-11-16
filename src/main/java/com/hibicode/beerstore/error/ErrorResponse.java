@@ -20,7 +20,7 @@ public class ErrorResponse {
     }
 
     static ErrorResponse of(HttpStatus status, ApiError error) {
-        return new ErrorResponse(status.value(), Collections.singletonList(error));
+        return of(status, Collections.singletonList(error));
     }
 
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
