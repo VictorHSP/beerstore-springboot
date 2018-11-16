@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,7 +23,7 @@ public class BeerResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Beer create(@RequestBody Beer beer) {
+    public Beer create(@Valid @RequestBody Beer beer) {
         return beers.save(beer);
     }
 

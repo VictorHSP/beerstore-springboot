@@ -7,5 +7,6 @@ Tecnologias utilizadas:
  - Actuator
  - Lombok
  - PostgreSQL
+ - Bean Validation
  
  
