@@ -73,4 +73,57 @@ public class BeerServiceTest {
 
     }
 
+    @Test
+    public void should_update_beer_volume() {
+
+        Beer newBeerInDataBase = new Beer();
+        newBeerInDataBase.setId(10L);
+        newBeerInDataBase.setName("Heineken");
+        newBeerInDataBase.setType(BeerType.LAGER);
+        newBeerInDataBase.setVolume(new BigDecimal("350"));
+
+        when(beersMocked.findByNameAndType("Heineken", BeerType.LAGER)).thenReturn(Optional.of(newBeerInDataBase));
+
+        final Beer beerToUpdate = new Beer();
+        beerToUpdate.setId(10L);
+        beerToUpdate.setName("Heineken");
+        beerToUpdate.setType(BeerType.LAGER);
+        beerToUpdate.setVolume(new BigDecimal("200"));
+
+        final Beer beerMocked = new Beer();
+        beerMocked.setId(10L);
+        beerMocked.setName("Heineken");
+        beerMocked.setType(BeerType.LAGER);
+        beerMocked.setVolume(new BigDecimal("200"));
+
+        when(beersMocked.save(beerToUpdate)).thenReturn(beerMocked);
+
+        final Beer beerUpdated = beerService.save(beerToUpdate);
+
+        assertThat(beerUpdated.getId(), equalTo(10L));
+        assertThat(beerUpdated.getName(), equalTo("Heineken"));
+        assertThat(beerUpdated.getType(), equalTo(BeerType.LAGER));
+        assertThat(beerUpdated.getVolume(), equalTo(new BigDecimal("200")));
+    }
+
+    @Test(expected = BeerAlreadyExistException.class)
+    public void should_deny_update_of_a_existing_beer_that_already_exists() {
+        final Beer beerInDatabase = new Beer();
+        beerInDatabase.setId(10L);
+        beerInDatabase.setName("Heineken");
+        beerInDatabase.setType(BeerType.LAGER);
+        beerInDatabase.setVolume(new BigDecimal("355"));
+
+        when(beersMocked.findByNameAndType("Heineken", BeerType
+                .LAGER)).thenReturn(Optional.of(beerInDatabase));
+
+        final Beer beerToUpdate = new Beer();
+        beerToUpdate.setId(5L);
+        beerToUpdate.setName("Heineken");
+        beerToUpdate.setType(BeerType.LAGER);
+        beerToUpdate.setVolume(new BigDecimal("355"));
+
+        beerService.save(beerToUpdate);
+    }
+
 }
