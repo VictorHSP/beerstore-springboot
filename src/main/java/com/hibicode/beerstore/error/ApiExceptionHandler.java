@@ -3,12 +3,14 @@ package com.hibicode.beerstore.error;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.hibicode.beerstore.service.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,6 +61,15 @@ public class ApiExceptionHandler {
 
         final ErrorResponse errorResponse = ErrorResponse.of(status, toApiError(errorCode, locale));
         return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleMessageNotReadableException(HttpMessageNotReadableException exception, Locale locale) {
+        if (exception.contains(InvalidFormatException.class)) {
+            return handleInvalidFormatException((InvalidFormatException) exception.getRootCause(), locale);
+        }else {
+            return handleException(exception, locale);
+        }
     }
 
     @ExceptionHandler(Exception.class)

@@ -31,4 +31,11 @@ public class BeerResource {
         return beerService.save(beer);
     }
 
+    @PutMapping("/{id}")
+    public Beer update(@PathVariable Long id,
+            @Valid @RequestBody Beer beer) {
+        beer.setId(id);
+        return beerService.save(beer);
+    }
+
 }

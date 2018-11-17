@@ -8,12 +8,13 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded =  true)
-public class Beer {
+public class Beer implements Serializable {
 
     @Id
     @SequenceGenerator(name = "beer_seq", sequenceName = "beer_seq", allocationSize = 1)
