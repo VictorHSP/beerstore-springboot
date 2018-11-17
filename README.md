@@ -8,5 +8,7 @@ Tecnologias utilizadas:
  - Lombok
  - PostgreSQL
  - Bean Validation
+ - Mockito
+ - Hamcrest
  
  
