@@ -60,7 +60,7 @@ public class ApiExceptionHandler {
         final HttpStatus status = exception.getStatus();
 
         final ErrorResponse errorResponse = ErrorResponse.of(status, toApiError(errorCode, locale));
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
