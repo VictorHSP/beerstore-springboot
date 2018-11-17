@@ -2,6 +2,7 @@ package com.hibicode.beerstore.resource;
 
 import com.hibicode.beerstore.model.Beer;
 import com.hibicode.beerstore.repository.Beers;
+import com.hibicode.beerstore.service.BeerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,9 @@ import java.util.List;
 public class BeerResource {
 
     @Autowired
+    private BeerService beerService;
+
+    @Autowired
     private Beers beers;
 
     @GetMapping
@@ -24,7 +28,7 @@ public class BeerResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Beer create(@Valid @RequestBody Beer beer) {
-        return beers.save(beer);
+        return beerService.save(beer);
     }
 
 }
