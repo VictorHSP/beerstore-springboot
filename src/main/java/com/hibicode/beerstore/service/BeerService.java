@@ -11,8 +11,11 @@ import java.util.Optional;
 @Service
 public class BeerService {
 
-    @Autowired
     private Beers beers;
+
+    public BeerService(@Autowired Beers beers) {
+        this.beers = beers;
+    }
 
     public Beer save(final Beer beer) {
 
