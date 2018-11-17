@@ -3,9 +3,11 @@ package com.hibicode.beerstore.service;
 import com.hibicode.beerstore.model.Beer;
 import com.hibicode.beerstore.repository.Beers;
 import com.hibicode.beerstore.service.exception.BeerAlreadyExistException;
+import com.hibicode.beerstore.service.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -20,6 +22,15 @@ public class BeerService {
     public Beer save(final Beer beer) {
         verifyIfBeerExists(beer);
         return beers.save(beer);
+    }
+
+    public void delete(Long id) {
+        Optional<Beer> beerToDelete = beers.findById(id);
+        if (!beerToDelete.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+
+        beers.delete(beerToDelete.get());
     }
 
     private void verifyIfBeerExists(final Beer beer) {

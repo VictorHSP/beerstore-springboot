@@ -8,6 +8,7 @@ import com.hibicode.beerstore.service.exception.BeerAlreadyExistException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+import com.hibicode.beerstore.service.exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -124,6 +125,11 @@ public class BeerServiceTest {
         beerToUpdate.setVolume(new BigDecimal("355"));
 
         beerService.save(beerToUpdate);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void should_deny_delete_of_a_existing_beer() {
+        beerService.delete(10L);
     }
 
 }

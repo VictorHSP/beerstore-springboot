@@ -38,4 +38,10 @@ public class BeerResource {
         return beerService.save(beer);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        beerService.delete(id);
+    }
+
 }
