@@ -1,0 +1,15 @@
+---
+- name: Ensure Docker is installed # Descrição
+  hosts: all
+  remote_user: ec2-user # usuário que irá executar os comandos
+  gather_facts: false # desabilita buscar info do sistema
+  become: true # executa todos os comandos como super usuario 'sudo'
+  tasks:
+    - name: Install Docker # garante a instalação do docker
+      yum: name=docker
+
+    - name: Ensure Docker service is started # garante que o docker está iniciado
+      service:
+        name: docker
+        state: started
+        enable: yes
