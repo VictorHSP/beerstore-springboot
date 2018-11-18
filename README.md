@@ -17,6 +17,7 @@ Tecnologias utilizadas:
  # Docker
  
  Script para criação e comunicação entre docker app e docker db: 
+ - ```./gradlew build ```
  - ```docker run -p 5432:5432 --name beerdb -e POSTGRES_USER={user}-e POSTGRES_PASSWORD={pass} -e POSTGRES_DB=beerstore -d postgres:10.5-alpine```
  - ```docker network create beer-net```
  - ```docker network connect beer-net beerdb```
