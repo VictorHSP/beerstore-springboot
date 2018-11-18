@@ -13,3 +13,44 @@
         name: docker
         state: started
         enabled: yes
+
+- name: Initialize Swarm Mode
+  hosts: manager-leader
+  remote_user: ec2-user
+  gather_facts: false
+  become: true
+  tasks:
+    - shell: "docker info | grep 'Swarm' | awk -F'Swarm: ' '{print $NF'}"
+      register: swarm_mode
+
+    - name: Swarm init
+      command: docker swarm init --advertise-addr {{ private_ip }}
+      when: swarm_mode.stdout == "inactive"
+
+    - name: Master token
+      command: docker swarm join-token manager -q
+      when: swarm_mode.stdout == "active"
+      register: master_token
+
+- name: Join Swarm Cluster
+  hosts: manager-follower
+  remote_user: ec2-user
+  gather_facts: false
+  become: true
+  vars:
+    token: "{{ hostvars[groups['manager-leader'][0]]['master_token']['stdout'] }}" #WTF is this ???
+    master: "{{ hostvars[groups['manager-leader'][0]]['private_ip']  }}"
+  tasks:
+    - shell: "docker info | grep 'Swarm' | awk -F'Swarm: ' '{print $NF'}"
+      register: swarm_mode
+
+    - name: Join Swarm cluster as manager
+      command: docker swarm join --token {{ token }} {{ master }}:2377
+      when: swarm_mode.stdout == "inactive"
+      register: follower
+
+    - name: Show join cluster results
+      debug: var=follower.stdout
+
+    - name: Show join cluster errors
+      debug: var=follower.stderr

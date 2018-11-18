@@ -35,3 +35,39 @@ resource "aws_security_group" "allow_outbound" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+// Habilita a comunicação do Swarm
+resource "aws_security_group" "cluster_communication" {
+
+  vpc_id = "${aws_vpc.main.id}"
+  name = "hibicode_cluster_communication"
+
+  ingress {
+    from_port = 2377
+    to_port = 2377
+    protocol = "tcp"
+    self = true
+  }
+
+  ingress {
+    from_port = 7946
+    to_port = 7946
+    protocol = "tcp"
+    self = true
+  }
+
+  ingress {
+    from_port = 7946
+    to_port = 7946
+    protocol = "udp"
+    self = true
+  }
+
+  ingress {
+    from_port = 4789
+    to_port = 4789
+    protocol = "udp"
+    self = true
+  }
+
+}
