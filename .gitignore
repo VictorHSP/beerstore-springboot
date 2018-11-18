@@ -26,6 +26,7 @@
 /.nb-gradle/
 
 ### Terraform ###
-/terraform/key
+/terraform/key/beerstore_key.pub
+/terraform/key/beerstore_key
 /terraform/.terraform
 /terraform/hosts
