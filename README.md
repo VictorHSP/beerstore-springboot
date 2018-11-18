@@ -10,5 +10,7 @@ Tecnologias utilizadas:
  - Bean Validation
  - Mockito
  - Hamcrest
- 
+ - AWS ( EC2, S3, VPC)
+ - Docker
+ - Terraform 
  
