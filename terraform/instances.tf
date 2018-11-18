@@ -12,6 +12,8 @@ resource "aws_instance" "instances" {
 
   key_name = "${aws_key_pair.key_pair.key_name}"
 
+  vpc_security_group_ids = ["${aws_security_group.allow_ssh.id}"]
+
   tags {
     Name = "hibicode_instances"
   }
