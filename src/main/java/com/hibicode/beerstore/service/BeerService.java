@@ -1,50 +1,65 @@
 package com.hibicode.beerstore.service;
 
+import com.hibicode.beerstore.beers.BeerRepository;
 import com.hibicode.beerstore.model.Beer;
-import com.hibicode.beerstore.repository.Beers;
 import com.hibicode.beerstore.service.exception.BeerAlreadyExistException;
 import com.hibicode.beerstore.service.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BeerService {
 
-    private Beers beers;
+    private BeerRepository beers;
 
-    public BeerService(@Autowired Beers beers) {
+    @Autowired
+    public BeerService(BeerRepository beers) {
         this.beers = beers;
     }
 
     public Beer save(final Beer beer) {
-        verifyIfBeerExists(beer);
+        verifyIfBeerAlreadyExists(beer);
         return beers.save(beer);
     }
 
-    public void delete(Long id) {
-        Optional<Beer> beerToDelete = beers.findById(id);
-        if (!beerToDelete.isPresent()) {
-            throw new EntityNotFoundException();
-        }
-
-        beers.delete(beerToDelete.get());
+    public Beer update(final Beer beer) {
+        verifyIfBeerExists(beer.getId());
+        return save(beer);
     }
 
-    private void verifyIfBeerExists(final Beer beer) {
-        Optional<Beer> beerByNameAndType = beers.findByNameAndType(beer.getName(), beer.getType());
+    public List<Beer> listAll() {
+        return beers.findAll();
+    }
+
+    public void delete(final Long id) {
+        beers.delete(verifyIfBeerExists(id));
+    }
+
+    private Beer verifyIfBeerExists(final Long id) {
+        Optional<Beer> beerOptional = beers.findById(id);
+        if (!beerOptional.isPresent()) {
+            throw new EntityNotFoundException(id, Beer.class.getSimpleName());
+        }
+
+        return beerOptional.get();
+    }
+
+    private void verifyIfBeerAlreadyExists(final Beer beer) {
+        Optional<Beer> beerByNameAndType = beers.findByNameAndType
+                (beer.getName(), beer.getType());
 
         if (beerByNameAndType.isPresent() && (beer.isNew() ||
-                isUpdatingToADifferentBeer(beer, beerByNameAndType)) ) {
+                isUpdatingToADifferentBeer(beer, beerByNameAndType))) {
             throw new BeerAlreadyExistException();
         }
-
     }
 
-    private boolean isUpdatingToADifferentBeer(Beer beer, Optional<Beer> beerByNameAndType) {
-        return beer.alreadyExist() && !beerByNameAndType.get().equals(beer);
+    private boolean isUpdatingToADifferentBeer(final Beer beer, final Optional<Beer> beerByNameAndType) {
+        return beer.alreadyExist() && !beerByNameAndType.get()
+                .equals(beer);
     }
 
 }

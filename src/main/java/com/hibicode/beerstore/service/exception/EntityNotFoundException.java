@@ -4,7 +4,13 @@ import org.springframework.http.HttpStatus;
 
 public class EntityNotFoundException extends BusinessException {
 
-    public EntityNotFoundException() {
-        super("beer-6", HttpStatus.NOT_FOUND);
+    public EntityNotFoundException(Object... args) {
+        super("error-2", HttpStatus.NOT_FOUND, args);
     }
+
+    public EntityNotFoundException(String errorCode, Object... args) {
+        super(errorCode, HttpStatus.NOT_FOUND, args);
+    }
+
+
 }

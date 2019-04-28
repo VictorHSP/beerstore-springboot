@@ -1,20 +1,19 @@
 package com.hibicode.beerstore.model;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded =  true)
-public class Beer implements Serializable {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Beer {
 
     @Id
     @SequenceGenerator(name = "beer_seq", sequenceName = "beer_seq", allocationSize = 1)
@@ -34,14 +33,12 @@ public class Beer implements Serializable {
 
     @JsonIgnore
     public boolean isNew() {
-        return getId() == null;
+        return this.getId() == null;
     }
 
     @JsonIgnore
     public boolean alreadyExist() {
-        return getId() != null;
+        return this.getId() != null;
     }
-
-
 
 }

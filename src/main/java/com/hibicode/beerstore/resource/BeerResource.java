@@ -1,10 +1,10 @@
 package com.hibicode.beerstore.resource;
 
 import com.hibicode.beerstore.model.Beer;
-import com.hibicode.beerstore.repository.Beers;
 import com.hibicode.beerstore.service.BeerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,31 +17,28 @@ public class BeerResource {
     @Autowired
     private BeerService beerService;
 
-    @Autowired
-    private Beers beers;
-
     @GetMapping
     public List<Beer> all() {
-        return beers.findAll();
+        return beerService.listAll();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Beer create(@Valid @RequestBody Beer beer) {
+    public Beer save(@Valid @RequestBody Beer beer) {
         return beerService.save(beer);
     }
 
+
     @PutMapping("/{id}")
-    public Beer update(@PathVariable Long id,
-            @Valid @RequestBody Beer beer) {
+    public Beer update(@PathVariable Long id, @Valid @RequestBody Beer beer) {
         beer.setId(id);
-        return beerService.save(beer);
+        return beerService.update(beer);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         beerService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

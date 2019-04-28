@@ -1,19 +1,19 @@
 package com.hibicode.beerstore.service;
 
-import com.hibicode.beerstore.model.Beer;
-import com.hibicode.beerstore.model.BeerType;
-import com.hibicode.beerstore.repository.Beers;
-import com.hibicode.beerstore.service.exception.BeerAlreadyExistException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 
+import com.hibicode.beerstore.beers.BeerRepository;
+import com.hibicode.beerstore.model.Beer;
+import com.hibicode.beerstore.model.BeerType;
+import com.hibicode.beerstore.service.exception.BeerAlreadyExistException;
 import com.hibicode.beerstore.service.exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -21,9 +21,9 @@ import java.util.Optional;
 public class BeerServiceTest {
 
     private BeerService beerService;
-    @Mock
-    private Beers beersMocked;
 
+    @Mock
+    private BeerRepository beersMocked;
 
     @Before
     public void setup() {
@@ -34,81 +34,83 @@ public class BeerServiceTest {
 
     @Test(expected = BeerAlreadyExistException.class)
     public void should_deny_creation_of_beer_that_exists() {
-        Beer beerInDataBase = new Beer();
+        final Beer beerInDataBase = new Beer();
         beerInDataBase.setId(10L);
         beerInDataBase.setName("Heineken");
-        beerInDataBase.setVolume(new BigDecimal("355"));
         beerInDataBase.setType(BeerType.LAGER);
+        beerInDataBase.setVolume(new BigDecimal("355"));
 
-        when(beersMocked.findByNameAndType("Heineken", BeerType.LAGER)).thenReturn(Optional.of(beerInDataBase));
+        when(beersMocked.findByNameAndType("Heineken", BeerType.LAGER))
+                .thenReturn(Optional.of(beerInDataBase));
 
-        Beer newBeer = new Beer();
+        final Beer newBeer = new Beer();
         newBeer.setName("Heineken");
         newBeer.setType(BeerType.LAGER);
-        newBeer.setVolume(new BigDecimal("350"));
-
+        newBeer.setVolume(new BigDecimal("355"));
         beerService.save(newBeer);
+
     }
 
     @Test
     public void should_create_new_beer() {
-        Beer newBeer = new Beer();
+        final Beer newBeer = new Beer();
         newBeer.setName("Heineken");
         newBeer.setType(BeerType.LAGER);
-        newBeer.setVolume(new BigDecimal("350"));
+        newBeer.setVolume(new BigDecimal("355"));
 
-        Beer newBeerInDataBaseSaved = new Beer();
-        newBeerInDataBaseSaved.setId(10L);
-        newBeerInDataBaseSaved.setName("Heineken");
-        newBeerInDataBaseSaved.setType(BeerType.LAGER);
-        newBeerInDataBaseSaved.setVolume(new BigDecimal("350"));
+        final Beer newBeerInDatabase = new Beer();
+        newBeerInDatabase.setId(10L);
+        newBeerInDatabase.setName("Heineken");
+        newBeerInDatabase.setType(BeerType.LAGER);
+        newBeerInDatabase.setVolume(new BigDecimal("355"));
+        when(beersMocked.save(newBeer)).thenReturn(newBeerInDatabase);
 
-        when(beersMocked.save(newBeer)).thenReturn(newBeerInDataBaseSaved);
-
-        Beer beerSaved = beerService.save(newBeer);
+        final Beer beerSaved = beerService.save(newBeer);
 
         assertThat(beerSaved.getId(), equalTo(10L));
         assertThat(beerSaved.getName(), equalTo("Heineken"));
         assertThat(beerSaved.getType(), equalTo(BeerType.LAGER));
-        assertThat(beerSaved.getVolume(), equalTo(new BigDecimal("350")));
+
 
     }
 
+
     @Test
     public void should_update_beer_volume() {
+        final Beer beerInDatabase = new Beer();
+        beerInDatabase.setId(10L);
+        beerInDatabase.setName("Devassa");
+        beerInDatabase.setType(BeerType.PILSEN);
+        beerInDatabase.setVolume(new BigDecimal("300"));
 
-        Beer newBeerInDataBase = new Beer();
-        newBeerInDataBase.setId(10L);
-        newBeerInDataBase.setName("Heineken");
-        newBeerInDataBase.setType(BeerType.LAGER);
-        newBeerInDataBase.setVolume(new BigDecimal("350"));
-
-        when(beersMocked.findByNameAndType("Heineken", BeerType.LAGER)).thenReturn(Optional.of(newBeerInDataBase));
+        when(beersMocked.findByNameAndType("Devassa",
+                BeerType.PILSEN)).thenReturn(Optional.of(beerInDatabase));
 
         final Beer beerToUpdate = new Beer();
         beerToUpdate.setId(10L);
-        beerToUpdate.setName("Heineken");
-        beerToUpdate.setType(BeerType.LAGER);
+        beerToUpdate.setName("Devassa");
+        beerToUpdate.setType(BeerType.PILSEN);
         beerToUpdate.setVolume(new BigDecimal("200"));
 
         final Beer beerMocked = new Beer();
         beerMocked.setId(10L);
-        beerMocked.setName("Heineken");
-        beerMocked.setType(BeerType.LAGER);
+        beerMocked.setName("Devassa");
+        beerMocked.setType(BeerType.PILSEN);
         beerMocked.setVolume(new BigDecimal("200"));
 
         when(beersMocked.save(beerToUpdate)).thenReturn(beerMocked);
+        when(beersMocked.findById(10L)).thenReturn(Optional.of(beerInDatabase));
 
-        final Beer beerUpdated = beerService.save(beerToUpdate);
-
+        final Beer beerUpdated = beerService.update(beerToUpdate);
         assertThat(beerUpdated.getId(), equalTo(10L));
-        assertThat(beerUpdated.getName(), equalTo("Heineken"));
-        assertThat(beerUpdated.getType(), equalTo(BeerType.LAGER));
-        assertThat(beerUpdated.getVolume(), equalTo(new BigDecimal("200")));
+        assertThat(beerUpdated.getName(), equalTo("Devassa"));
+        assertThat(beerUpdated.getType(), equalTo(BeerType.PILSEN));
+        assertThat(beerUpdated.getVolume(), equalTo(new BigDecimal
+                ("200")));
     }
 
     @Test(expected = BeerAlreadyExistException.class)
-    public void should_deny_update_of_a_existing_beer_that_already_exists() {
+    public void should_deny_update_of_an_existing_beer_that_already_exists() {
         final Beer beerInDatabase = new Beer();
         beerInDatabase.setId(10L);
         beerInDatabase.setName("Heineken");
@@ -117,6 +119,7 @@ public class BeerServiceTest {
 
         when(beersMocked.findByNameAndType("Heineken", BeerType
                 .LAGER)).thenReturn(Optional.of(beerInDatabase));
+        when(beersMocked.findById(5L)).thenReturn(Optional.of(beerInDatabase));
 
         final Beer beerToUpdate = new Beer();
         beerToUpdate.setId(5L);
@@ -124,12 +127,34 @@ public class BeerServiceTest {
         beerToUpdate.setType(BeerType.LAGER);
         beerToUpdate.setVolume(new BigDecimal("355"));
 
-        beerService.save(beerToUpdate);
+        beerService.update(beerToUpdate);
     }
 
     @Test(expected = EntityNotFoundException.class)
-    public void should_deny_delete_of_a_existing_beer() {
+    public void should_deny_update_beers_not_found() {
+        final Beer beerInDatabase = new Beer();
+        beerInDatabase.setId(10L);
+        beerService.update(beerInDatabase);
+    }
+
+
+    @Test(expected = EntityNotFoundException.class)
+    public void should_deny_delete_beers_not_found() {
+        when(beersMocked.findById(10L)).thenReturn(Optional.ofNullable(null));
         beerService.delete(10L);
     }
+
+    @Test
+    public void should_delete_beers() {
+        final Beer beerInDatabase = new Beer();
+        beerInDatabase.setId(10L);
+        beerInDatabase.setName("Heineken");
+        beerInDatabase.setType(BeerType.LAGER);
+        beerInDatabase.setVolume(new BigDecimal("355"));
+
+        when(beersMocked.findById(10L)).thenReturn(Optional.of(beerInDatabase));
+        beerService.delete(10L);
+    }
+
 
 }

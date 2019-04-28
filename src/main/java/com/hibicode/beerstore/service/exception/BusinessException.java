@@ -6,11 +6,10 @@ import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 @Getter
-public class BusinessException extends RuntimeException {
+public class BusinessException extends  RuntimeException {
 
-    private final String code;
+    private final String errorCode;
     private final HttpStatus status;
-
-
+    private final Object[] args;
 
 }
